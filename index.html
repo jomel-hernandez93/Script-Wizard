@@ -32,14 +32,13 @@
             overflow: hidden;
         }
 
-        /* App Layout Split */
         .main-container {
             display: flex;
             width: 100%;
             height: 100%;
         }
 
-        /* Left Side: Dynamic Script Wizard */
+        /* Left Side Layout */
         .script-column {
             width: 70%;
             padding: 2rem;
@@ -47,9 +46,17 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            height: 100%;
         }
 
-        /* Right Side: Sticky Accordion Sidebar */
+        .workspace-split {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            flex-grow: 1;
+        }
+
+        /* Right Side Sidebar */
         .sidebar-column {
             width: 30%;
             background-color: #edf2f7;
@@ -69,14 +76,13 @@
             letter-spacing: 0.05em;
         }
 
-        /* Script Card Styling */
         .card {
             background: var(--card-bg);
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             padding: 2rem;
             border: 1px solid var(--border-color);
-            display: none; /* Controlled by JS */
+            display: none;
         }
 
         .card.active {
@@ -100,6 +106,17 @@
             margin-bottom: 0.5rem;
         }
 
+        .spiel-box {
+            background-color: #f0fff4;
+            border-left: 4px solid var(--success-color);
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            border-radius: 4px;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: #22543d;
+        }
+
         .inline-rebuttal {
             background-color: #fffaf0;
             border-left: 4px solid #dd6b20;
@@ -110,7 +127,6 @@
             display: none;
         }
 
-        /* Interactive Buttons */
         .btn-group {
             display: flex;
             gap: 1rem;
@@ -164,86 +180,101 @@
         }
         .btn-switch:hover { background-color: #fbd38d; }
 
-        /* Accordion Style Sidebar Objections */
-        .sidebar-section {
+        .scheduler-box {
+            background: #f7fafc;
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+        .scheduler-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
             margin-bottom: 1rem;
         }
-
-        .sidebar-section h3 {
-            font-size: 1.1rem;
-            padding-bottom: 0.25rem;
-            border-bottom: 2px solid #cbd5e0;
-            margin-bottom: 0.5rem;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
             color: #4a5568;
         }
-
-        .accordion-item {
-            background: var(--card-bg);
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
+        .form-input {
+            padding: 0.6rem;
+            font-size: 1rem;
             border: 1px solid var(--border-color);
-            overflow: hidden;
+            border-radius: 4px;
+            background: white;
         }
 
-        .accordion-header {
-            padding: 0.75rem 1rem;
-            background: #fff;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
+        .live-tracker-panel {
+            background: #edf2f7;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: auto;
+        }
+        .live-tracker-header {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #2d3748;
+            margin-bottom: 0.75rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            user-select: none;
+            border-bottom: 1px solid #cbd5e0;
+            padding-bottom: 0.5rem;
         }
-
-        .accordion-header:hover { background-color: #f7fafc; }
-
-        .accordion-content {
-            padding: 1rem;
-            background: #fffaf0;
-            border-top: 1px solid var(--border-color);
-            font-size: 1.05rem;
-            line-height: 1.5;
-            display: none;
-            color: #dd6b20;
-            font-weight: 500;
-        }
-
-        .accordion-item.open .accordion-content { display: block; }
-
-        .accordion-header::after {
-            content: '▼';
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            transition: transform 0.2s;
-        }
-
-        .accordion-item.open .accordion-header::after { transform: rotate(180deg); }
-
-        .intro-tabs {
-            display: flex;
-            gap: 0.5rem;
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
             margin-bottom: 1rem;
         }
-        .tab-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border-color);
-            background: #edf2f7;
-            cursor: pointer;
+        .live-tag {
+            background: white;
+            padding: 0.5rem 0.75rem;
             border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
             font-weight: 600;
+            color: #4a5568;
         }
-        .tab-btn.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
+        .live-tag span {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        .raw-log-box {
+            background: #1a202c;
+            color: #edf2f7;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            max-height: 150px;
+            overflow-y: auto;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .sidebar-section { margin-bottom: 1rem; }
+        .sidebar-section h3 { font-size: 1.1rem; padding-bottom: 0.25rem; border-bottom: 2px solid #cbd5e0; margin-bottom: 0.5rem; color: #4a5568; }
+        .accordion-item { background: var(--card-bg); border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--border-color); overflow: hidden; }
+        .accordion-header { padding: 0.75rem 1rem; background: #fff; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .accordion-header:hover { background-color: #f7fafc; }
+        .accordion-content { padding: 1rem; background: #fffaf0; border-top: 1px solid var(--border-color); font-size: 1.05rem; line-height: 1.5; display: none; color: #dd6b20; font-weight: 500; }
+        .accordion-item.open .accordion-content { display: block; }
+        .accordion-header::after { content: '▼'; font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s; }
+        .accordion-item.open .accordion-header::after { transform: rotate(180deg); }
+
+        .intro-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .tab-btn { padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: #edf2f7; cursor: pointer; border-radius: 4px; font-weight: 600; }
+        .tab-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -252,243 +283,316 @@
         
         <div class="script-column">
             
-            <div id="step-intro" class="card active">
-                <h2>1. Opening Options</h2>
-                <div class="intro-tabs">
-                    <button class="tab-btn active" onclick="switchIntro('new-lead', this)">New Lead Intro</button>
-                    <button class="tab-btn" onclick="switchIntro('web-search', this)">Website Search</button>
-                    <button class="tab-btn" onclick="switchIntro('old-lead', this)">Old Lead</button>
-                </div>
-                
-                <div id="intro-text-container">
-                    <p class="script-text" id="intro-render-target">
-                        "Hi <strong>(Lead)</strong>? <span class="instruction">(Pause)</span> This is <strong>[NAME]</strong> from Guaranteed Home Sales. The reason I'm calling is because we received your request for properties on our website and we have sent that to your email. I hope that's ok?"
-                    </p>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="startWorkflow('buyer')">Proceed to BUYER Workflow</button>
-                    <button class="btn btn-primary" onclick="startWorkflow('seller')">Proceed to SELLER Workflow</button>
-                </div>
-            </div>
-
-            <div id="buyer-q1" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q1')">🗀 Switch to Seller Workflow</button>
-                </div>
-                <h2>Buyer - Question 1</h2>
-                <p class="script-text">"Are you planning in buying a home in the next 3-6 months?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('buyer-q2')">YES</button>
-                    <button class="btn btn-danger" onclick="showInlineRebuttal('buyer-q1-rebuttal')">NO / NOT SURE</button>
-                </div>
-                <div id="buyer-q1-rebuttal" class="inline-rebuttal">
-                    "If we can find you your perfect home with the best deals what will stop you from buying in the next 3-6 months? OR What's holding you back from purchasing if there are really good deals right now can I ask?"
-                    <br><br>
-                    <button class="btn btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.9rem;" onclick="toggleSubElement('buyer-lease')">Lease Mentioned?</button>
-                    <div id="buyer-lease" style="display:none; margin-top:0.5rem; font-style:italic;">
-                        "When is your lease up? If we can get you a seller that could help you get out of your lease, would you be interested in moving sooner?"
+            <div class="workspace-split">
+                <div id="step-intro" class="card active">
+                    <h2>1. Opening Options</h2>
+                    <div class="intro-tabs">
+                        <button class="tab-btn active" onclick="switchIntro('new-lead', this)">New Lead Intro</button>
+                        <button class="tab-btn" onclick="switchIntro('web-search', this)">Website Search</button>
+                        <button class="tab-btn" onclick="switchIntro('old-lead', this)">Old Lead</button>
                     </div>
-                    <br><br>
-                    <button class="btn btn-primary" onclick="nextCard('buyer-q2')">Next Question</button>
-                </div>
-            </div>
-
-            <div id="buyer-q2" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q2')">🗀 Switch to Seller Workflow</button>
-                </div>
-                <h2>Buyer - Question 2</h2>
-                <p class="script-text">"Do you currently rent, or do you own your own home?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('buyer-q3')">RENT</button>
-                    <button class="btn btn-primary" onclick="showInlineRebuttal('buyer-q2-rebuttal')">OWN</button>
-                </div>
-                <div id="buyer-q2-rebuttal" class="inline-rebuttal">
-                    "Would you prefer to buy before listing your home, or do you want to sell first?"
-                    <br><br>
-                    <button class="btn btn-primary" onclick="nextCard('buyer-q3')">Next Question</button>
-                </div>
-            </div>
-
-            <div id="buyer-q3" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q3')">🗀 Switch to Seller Workflow</button>
-                </div>
-                <h2>Buyer - Question 3</h2>
-                <p class="script-text">"Are you planning on staying in the area or moving out of the area?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="nextCard('buyer-q4')">Next</button>
-                </div>
-            </div>
-
-            <div id="buyer-q4" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q4')">🗀 Switch to Seller Workflow</button>
-                </div>
-                <h2>Buyer - Question 4</h2>
-                <p class="script-text">"Will you be paying cash or will you need financing?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('buyer-offer')">CASH</button>
-                    <button class="btn btn-primary" onclick="showInlineRebuttal('buyer-q4-rebuttal')">FINANCING</button>
-                </div>
-                <div id="buyer-q4-rebuttal" class="inline-rebuttal">
-                    "Have you already spoken with a lender?"
-                    <br><br>
-                    <button class="btn btn-danger" style="padding:0.4rem 0.8rem; font-size:0.9rem;" onclick="toggleSubElement('buyer-no-lender')">No Lender Route</button>
-                    <div id="buyer-no-lender" style="display:none; margin-top:0.5rem;">
-                        "Can I ask what's your current credit score? [...] If we can get you a lender who will help you get pre-approved given your credit score, will you consider to buy sooner?"
+                    
+                    <div id="intro-text-container">
+                        <p class="script-text" id="intro-render-target">
+                            "Hi <strong>(Lead)</strong>? <span class="instruction">(Pause)</span> This is <strong>[NAME]</strong> from Guaranteed Home Sales. The reason I'm calling is because we received your request for properties on our website and we have sent that to your email. I hope that's ok?"
+                        </p>
                     </div>
-                    <br><br>
-                    <button class="btn btn-primary" onclick="nextCard('buyer-offer')">Go to Offer</button>
+
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="startWorkflow('buyer')">Proceed to BUYER Workflow</button>
+                        <button class="btn btn-primary" onclick="startWorkflow('seller')">Proceed to SELLER Workflow</button>
+                    </div>
+                </div>
+
+                <div id="buyer-q1" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q1')">🗀 Switch to Seller Workflow</button>
+                    </div>
+                    <h2>Buyer - Question 1</h2>
+                    <p class="script-text">"Are you planning in buying a home in the next 3-6 months?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Timeline', '3-6 Months (Yes)'); nextCard('buyer-q2')">YES</button>
+                        <button class="btn btn-danger" onclick="logAnswer('Timeline', 'Unsure / Hesitant'); showInlineRebuttal('buyer-q1-rebuttal')">NO / NOT SURE</button>
+                    </div>
+                    <div id="buyer-q1-rebuttal" class="inline-rebuttal">
+                        "If we can find you your perfect home with the best deals what will stop you from buying in the next 3-6 months? OR What's holding you back from purchasing if there are really good deals right now can I ask?"
+                        <br><br>
+                        <button class="btn btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.9rem;" onclick="logAnswer('Timeline Note', 'Lease issues mentioned'); toggleSubElement('buyer-lease')">Lease Mentioned?</button>
+                        <div id="buyer-lease" style="display:none; margin-top:0.5rem; font-style:italic;">
+                            "When is your lease up? If we can get you a seller that could help you get out of your lease, would you be interested in moving sooner?"
+                        </div>
+                        <br><br>
+                        <button class="btn btn-primary" onclick="nextCard('buyer-q2')">Next Question</button>
+                    </div>
+                </div>
+
+                <div id="buyer-q2" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q2')">🗀 Switch to Seller Workflow</button>
+                    </div>
+                    <h2>Buyer - Question 2</h2>
+                    <p class="script-text">"Do you currently rent, or do you own your own home?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Current Home Status', 'Rents'); nextCard('buyer-q3')">RENT</button>
+                        <button class="btn btn-primary" onclick="logAnswer('Current Home Status', 'Owns'); showInlineRebuttal('buyer-q2-rebuttal')">OWN</button>
+                    </div>
+                    <div id="buyer-q2-rebuttal" class="inline-rebuttal">
+                        "Would you prefer to buy before listing your home, or do you want to sell first?"
+                        <br><br>
+                        <button class="btn btn-primary" onclick="nextCard('buyer-q3')">Next Question</button>
+                    </div>
+                </div>
+
+                <div id="buyer-q3" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q3')">🗀 Switch to Seller Workflow</button>
+                    </div>
+                    <h2>Buyer - Question 3</h2>
+                    <p class="script-text">"Are you planning on staying in the area or moving out of the area?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Target Location', 'Staying in Area'); nextCard('buyer-q4')">Staying in Area</button>
+                        <button class="btn btn-danger" onclick="logAnswer('Target Location', 'Moving Out of Area'); nextCard('buyer-q4')">Moving Out of Area</button>
+                    </div>
+                </div>
+
+                <div id="buyer-q4" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q4')">🗀 Switch to Seller Workflow</button>
+                    </div>
+                    <h2>Buyer - Question 4</h2>
+                    <p class="script-text">"Will you be paying cash or will you need financing?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Financing Type', 'Cash'); nextCard('buyer-offer')">CASH</button>
+                        <button class="btn btn-primary" onclick="logAnswer('Financing Type', 'Needs Financing'); showInlineRebuttal('buyer-q4-rebuttal')">FINANCING</button>
+                    </div>
+                    <div id="buyer-q4-rebuttal" class="inline-rebuttal">
+                        "Have you already spoken with a lender?"
+                        <br><br>
+                        <button class="btn btn-danger" style="padding:0.4rem 0.8rem; font-size:0.9rem;" onclick="logAnswer('Lender Note', 'No lender yet'); toggleSubElement('buyer-no-lender')">No Lender Route</button>
+                        <div id="buyer-no-lender" style="display:none; margin-top:0.5rem;">
+                            "Can I ask what's your current credit score? [...] If we can get you a lender who will help you get pre-approved given your credit score, will you consider to buy sooner?"
+                        </div>
+                        <br><br>
+                        <button class="btn btn-primary" onclick="nextCard('buyer-offer')">Go to Offer</button>
+                    </div>
+                </div>
+
+                <div id="buyer-offer" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-offer')">🗀 Switch to Seller Workflow</button>
+                    </div>
+                    <h2>Buyer Offer</h2>
+                    <p class="script-text">"Would you like to receive daily updates of homes that match what you’re looking for from ALL real estate companies, emailed to your phone, as quickly as they become available, including homes that are Good deals like bank sales, vacant homes and estate sales AND you can't find them on Internet? It’s a FREE service and of course you're never obligated to buy a home. Would that interest you? (or does that sound helpful)?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Offer Accepted', 'Yes'); nextCard('buyer-close')">Lead Says YES</button>
+                        <button class="btn btn-secondary" onclick="resetWizard()">Start Over</button>
+                    </div>
+                </div>
+
+                <div id="buyer-close" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-close')">🗀 Switch to Seller Workflow</button>
+                    </div>
+                    <h2>Appointment Close (Buyer)</h2>
+                    <p class="script-text">"When do you think is the best time to get together with you for about 15-20 minutes so you can show us exactly what you're looking for? Do you prefer days or evenings?"</p>
+                    
+                    <div class="scheduler-box">
+                        <div class="scheduler-grid">
+                            <div class="form-group">
+                                <label>Lead Full Name</label>
+                                <input type="text" id="buyer-name" class="form-input" placeholder="John Doe" oninput="updateAppointmentSummary('buyer')">
+                            </div>
+                            <div class="form-group">
+                                <label>Appointment Date</label>
+                                <input type="date" id="buyer-date" class="form-input" onchange="updateAppointmentSummary('buyer')">
+                            </div>
+                            <div class="form-group">
+                                <label>Appointment Time</label>
+                                <input type="time" id="buyer-time" class="form-input" onchange="updateAppointmentSummary('buyer')">
+                            </div>
+                            <div class="form-group">
+                                <label>Meeting Type</label>
+                                <select id="buyer-type" class="form-input" onchange="toggleVenueInput('buyer'); updateAppointmentSummary('buyer')">
+                                    <option value="Zoom Link (Virtual)">Zoom Link (Virtual)</option>
+                                    <option value="Face to Face (Residence)">Face to Face (Residence)</option>
+                                    <option value="Face to Face (Office)">Face to Face (Office)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="buyer-address-container" style="display:none;">
+                                <label>Lead Residence Address</label>
+                                <input type="text" id="buyer-address" class="form-input" placeholder="Enter physical street address" oninput="updateAppointmentSummary('buyer')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="buyer-closing-script-box" class="spiel-box">
+                        <strong>Zoom Call Close Out Recap Spiel:</strong><br>
+                        "Alright, so we will see you at <span id="lbl-buyer-time-1">__AM/PM</span> on <span id="lbl-buyer-date">__________</span>. After this call, we will send you a text and an email that includes the link of the meeting. During the meeting, We will make sure to take down of what exactly you're looking for, we'll show you our latest list of homes that match your home buying criteria and we will also show you the special list of properties not found online. Again this is free of charge and you're never obligated to buy a home."
+                    </div>
+                    <button class="btn btn-success" style="width:100%;" onclick="resetWizard()">Finish Call / Clear Cache for Next Lead</button>
+                </div>
+
+
+                <div id="seller-q1" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q1')">🗀 Switch to Buyer Workflow</button>
+                    </div>
+                    <h2>Seller - Question 1</h2>
+                    <p class="script-text">"Are you planning in making a move in the next 3-6mos?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Timeline', '3-6 Months (Yes)'); nextCard('seller-q2')">YES</button>
+                        <button class="btn btn-danger" onclick="logAnswer('Timeline', 'Unsure / Delayed'); showInlineRebuttal('seller-q1-rebuttal')">NO</button>
+                    </div>
+                    <div id="seller-q1-rebuttal" class="inline-rebuttal">
+                        "If we can get you a seller that could help you get out of your lease, would you be interested in moving before then?"
+                        <br><br>
+                        <button class="btn btn-primary" onclick="nextCard('seller-q2')">Next Question</button>
+                    </div>
+                </div>
+
+                <div id="seller-q2" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q2')">🗀 Switch to Buyer Workflow</button>
+                    </div>
+                    <h2>Seller - Question 2</h2>
+                    <p class="script-text">"Do you currently rent, or do you own your own home?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Current Home Status', 'Rents'); nextCard('seller-q3')">RENT</button>
+                        <button class="btn btn-primary" onclick="logAnswer('Current Home Status', 'Owns House'); showInlineRebuttal('seller-q2-rebuttal')">OWN</button>
+                    </div>
+                    <div id="seller-q2-rebuttal" class="inline-rebuttal">
+                        "Would you prefer to buy before listing your home, or do you want to sell first? Do you rent or do you have a property that you're planning to sell?"
+                        <br><br>
+                        <button class="btn btn-primary" onclick="nextCard('seller-q3')">Next Question</button>
+                    </div>
+                </div>
+
+                <div id="seller-q3" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q3')">🗀 Switch to Buyer Workflow</button>
+                    </div>
+                    <h2>Seller - Question 3</h2>
+                    <p class="script-text">"Are you planning on staying in the area or moving out of the area?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Target Location', 'Staying in Area'); nextCard('seller-q4')">Staying in Area</button>
+                        <button class="btn btn-danger" onclick="logAnswer('Target Location', 'Moving Out of Area'); nextCard('seller-q4')">Moving Out of Area</button>
+                    </div>
+                </div>
+
+                <div id="seller-q4" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q4')">🗀 Switch to Buyer Workflow</button>
+                    </div>
+                    <h2>Seller - Question 4</h2>
+                    <p class="script-text">"If you were to sell, when do you think that might be?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Selling Window', 'Answer Provided'); nextCard('seller-q5')">ANSWERED</button>
+                        <button class="btn btn-danger" onclick="logAnswer('Selling Window', 'Unsure'); showInlineRebuttal('seller-q4-rebuttal')">UNSURE</button>
+                    </div>
+                    <div id="seller-q4-rebuttal" class="inline-rebuttal">
+                        "If we can guarantee the sale of your home according to your price point, with the least amount of hassle and the soonest possible time, will you consider to sell sooner?"
+                        <br><br>
+                        <button class="btn btn-primary" onclick="nextCard('seller-q5')">Next Question</button>
+                    </div>
+                </div>
+
+                <div id="seller-q5" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-offer')">🗀 Switch to Buyer Workflow</button>
+                    </div>
+                    <h2>Seller - Question 5</h2>
+                    <p class="script-text">"Do you have a realtor to help you when the time is right?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-danger" onclick="logAnswer('Has Agent', 'Yes / Committed'); showInlineRebuttal('seller-q5-rebuttal')">YES</button>
+                        <button class="btn btn-success" onclick="logAnswer('Has Agent', 'No'); nextCard('seller-offer')">NO</button>
+                    </div>
+                    <div id="seller-q5-rebuttal" class="inline-rebuttal">
+                        "Are you 100% committed to be working exclusively and only with that realtor?"
+                        <br><br>
+                        <button class="btn btn-primary" onclick="nextCard('seller-offer')">Go to Offer</button>
+                    </div>
+                </div>
+
+                <div id="seller-offer" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-offer')">🗀 Switch to Buyer Workflow</button>
+                    </div>
+                    <h2>Seller Offer</h2>
+                    <p class="script-text">"Would you like a free market evaluation to determine what your home would sell for? Also, I can give you tips on what to do and what not to do to sell your home for the most amount of money, and we can go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. It’s FREE of charge and obligates you to nothing. Does that sound helpful?"</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="logAnswer('Offer Accepted', 'Yes'); nextCard('seller-close')">Lead Says YES</button>
+                        <button class="btn btn-secondary" onclick="resetWizard()">Start Over</button>
+                    </div>
+                </div>
+
+                <div id="seller-close" class="card">
+                    <div class="nav-controls">
+                        <button class="btn btn-back" onclick="goBack()">← Back</button>
+                        <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-close')">🗀 Switch to Buyer Workflow</button>
+                    </div>
+                    <h2>Appointment Close (Seller)</h2>
+                    
+                    <div class="scheduler-box">
+                        <div class="scheduler-grid">
+                            <div class="form-group">
+                                <label>Lead Full Name</label>
+                                <input type="text" id="seller-name" class="form-input" placeholder="Jane Doe" oninput="updateAppointmentSummary('seller')">
+                            </div>
+                            <div class="form-group">
+                                <label>Appointment Date</label>
+                                <input type="date" id="seller-date" class="form-input" onchange="updateAppointmentSummary('seller')">
+                            </div>
+                            <div class="form-group">
+                                <label>Appointment Time</label>
+                                <input type="time" id="seller-time" class="form-input" onchange="updateAppointmentSummary('seller')">
+                            </div>
+                            <div class="form-group">
+                                <label>Meeting Type</label>
+                                <select id="seller-type" class="form-input" onchange="toggleVenueInput('seller'); updateAppointmentSummary('seller')">
+                                    <option value="Zoom Link (Virtual)">Zoom Link (Virtual)</option>
+                                    <option value="Face to Face (Residence)">Face to Face (Residence)</option>
+                                    <option value="Face to Face (Office)">Face to Face (Office)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="seller-address-container" style="display:none;">
+                                <label>Lead Property Address</label>
+                                <input type="text" id="seller-address" class="form-input" placeholder="Enter physical street address" oninput="updateAppointmentSummary('seller')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="seller-closing-script-box" class="spiel-box">
+                        <strong>Zoom Close Out Recap Spiel:</strong><br>
+                        "Alright, so we will see you at <span id="lbl-seller-time-1">__AM/PM</span> on <span id="lbl-seller-date">__________</span>. After this call, we will send you a text and an email that includes the link of the meeting and instructions on how to use the ZOOM. During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. Again this is free of charge and you are never obligated to sell your home."
+                    </div>
+                    <button class="btn btn-success" style="width:100%;" onclick="resetWizard()">Finish Call / Clear Cache for Next Lead</button>
                 </div>
             </div>
 
-            <div id="buyer-offer" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-offer')">🗀 Switch to Seller Workflow</button>
+            <div class="live-tracker-panel">
+                <div class="live-tracker-header">
+                    <span>🔴 Live Session Summary Log (Real-Time CRM Output)</span>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Updates instantly</span>
                 </div>
-                <h2>Buyer Offer</h2>
-                <p class="script-text">"Would you like to receive daily updates of homes that match what you’re looking for from ALL real estate companies, emailed to your phone, as quickly as they become available, including homes that are Good deals like bank sales, vacant homes and estate sales AND you can't find them on Internet? It’s a FREE service and of course you're never obligated to buy a home. Would that interest you? (or does that sound helpful)?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('buyer-close')">Lead Says YES</button>
-                    <button class="btn btn-secondary" onclick="resetWizard()">Start Over</button>
+                <div class="live-grid">
+                    <div class="live-tag">Workflow: <span id="track-flow">Not Selected</span></div>
+                    <div class="live-tag">Timeline: <span id="track-timeline">Pending</span></div>
+                    <div class="live-tag">Home Status: <span id="track-status">Pending</span></div>
+                    <div class="live-tag">Financing/Agent: <span id="track-finance">Pending</span></div>
                 </div>
-            </div>
-
-            <div id="buyer-close" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-close')">🗀 Switch to Seller Workflow</button>
-                </div>
-                <h2>Appointment Close (Buyer)</h2>
-                <p class="script-text">"When do you think is the best time to get together with you for about 15-20 minutes so you can show us exactly what you're looking for? Do you prefer days or evenings?"</p>
-                <p class="script-text" style="font-size:1.1rem; color:var(--text-muted);">
-                    <strong>Zoom Call Close Out Recap:</strong><br>
-                    "Alright, so we will see you at __AM/PM. After this call, we will send you a text and an email that includes the link of the meeting. During the meeting, We will make sure to take down of what exactly you're looking for, we'll show you our latest list of homes that match your home buying criteria and we will also show you the special list of properties not found online. Again this is..."
-                </p>
-                <button class="btn btn-secondary" onclick="resetWizard()">Finish Call / Next Lead</button>
-            </div>
-
-
-            <div id="seller-q1" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q1')">🗀 Switch to Buyer Workflow</button>
-                </div>
-                <h2>Seller - Question 1</h2>
-                <p class="script-text">"Are you planning in making a move in the next 3-6mos?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('seller-q2')">YES</button>
-                    <button class="btn btn-danger" onclick="showInlineRebuttal('seller-q1-rebuttal')">NO</button>
-                </div>
-                <div id="seller-q1-rebuttal" class="inline-rebuttal">
-                    "If we can get you a seller that could help you get out of your lease, would you be interested in moving before then?"
-                    <br><br>
-                    <button class="btn btn-primary" onclick="nextCard('seller-q2')">Next Question</button>
-                </div>
-            </div>
-
-            <div id="seller-q2" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q2')">🗀 Switch to Buyer Workflow</button>
-                </div>
-                <h2>Seller - Question 2</h2>
-                <p class="script-text">"Do you currently rent, or do you own your own home?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('seller-q3')">RENT</button>
-                    <button class="btn btn-primary" onclick="showInlineRebuttal('seller-q2-rebuttal')">OWN</button>
-                </div>
-                <div id="seller-q2-rebuttal" class="inline-rebuttal">
-                    "Would you prefer to buy before listing your home, or do you want to sell first? Do you rent or do you have a property that you're planning to sell?"
-                    <br><br>
-                    <button class="btn btn-primary" onclick="nextCard('seller-q3')">Next Question</button>
-                </div>
-            </div>
-
-            <div id="seller-q3" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q3')">🗀 Switch to Buyer Workflow</button>
-                </div>
-                <h2>Seller - Question 3</h2>
-                <p class="script-text">"Are you planning on staying in the area or moving out of the area?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="nextCard('seller-q4')">Next</button>
-                </div>
-            </div>
-
-            <div id="seller-q4" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q4')">🗀 Switch to Buyer Workflow</button>
-                </div>
-                <h2>Seller - Question 4</h2>
-                <p class="script-text">"If you were to sell, when do you think that might be?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('seller-q5')">ANSWERED</button>
-                    <button class="btn btn-danger" onclick="showInlineRebuttal('seller-q4-rebuttal')">UNSURE</button>
-                </div>
-                <div id="seller-q4-rebuttal" class="inline-rebuttal">
-                    "If we can guarantee the sale of your home according to your price point, with the least amount of hassle and the soonest possible time, will you consider to sell sooner?"
-                    <br><br>
-                    <button class="btn btn-primary" onclick="nextCard('seller-q5')">Next Question</button>
-                </div>
-            </div>
-
-            <div id="seller-q5" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-offer')">🗀 Switch to Buyer Workflow</button>
-                </div>
-                <h2>Seller - Question 5</h2>
-                <p class="script-text">"Do you have a realtor to help you when the time is right?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="showInlineRebuttal('seller-q5-rebuttal')">YES</button>
-                    <button class="btn btn-primary" onclick="nextCard('seller-offer')">NO</button>
-                </div>
-                <div id="seller-q5-rebuttal" class="inline-rebuttal">
-                    "Are you 100% committed to be working exclusively and only with that realtor?"
-                    <br><br>
-                    <button class="btn btn-primary" onclick="nextCard('seller-offer')">Go to Offer</button>
-                </div>
-            </div>
-
-            <div id="seller-offer" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-offer')">🗀 Switch to Buyer Workflow</button>
-                </div>
-                <h2>Seller Offer</h2>
-                <p class="script-text">"Would you like a free market evaluation to determine what your home would sell for? Also, I can give you tips on what to do and what not to do to sell your home for the most amount of money, and we can go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. It’s FREE of charge and obligates you to nothing. Does that sound helpful?"</p>
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="nextCard('seller-close')">Lead Says YES</button>
-                    <button class="btn btn-secondary" onclick="resetWizard()">Start Over</button>
-                </div>
-            </div>
-
-            <div id="seller-close" class="card">
-                <div class="nav-controls">
-                    <button class="btn btn-back" onclick="goBack()">← Back</button>
-                    <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-close')">🗀 Switch to Buyer Workflow</button>
-                </div>
-                <h2>Appointment Close (Seller)</h2>
-                <p class="script-text">
-                    <strong>Face-to-Face Option:</strong> "When can we come by your place so we will give you an accurate assessment on your home? Days or evenings?"
-                    <br><br>
-                    <strong>Virtual Option:</strong> "When do you think is the best time to set-up a virtual meeting with you so we will give you a free market evaluation... Do you prefer days or evenings?"
-                </p>
-                <p class="script-text" style="font-size:1.1rem; color:var(--text-muted);">
-                    <strong>Zoom Close Out Recap:</strong><br>
-                    "Alright, so we will see you at __AM/PM. After this call, we will send you a text and an email that includes the link of the meeting and instructions on how to use the ZOOM. During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. Again this is free of charge and you are never obligated to sell your home."
-                </p>
-                <button class="btn btn-secondary" onclick="resetWizard()">Finish Call / Next Lead</button>
+                <div id="crm-raw-log" class="raw-log-box">[No data logged yet. Select a workflow pathway above to begin tracking...]</div>
             </div>
 
         </div>
@@ -498,17 +602,14 @@
             
             <div class="sidebar-section">
                 <h3>Buyer Resistance</h3>
-                
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">Too busy / No time to meet</div>
                     <div class="accordion-content">"We actually designed this for busy people exactly like you. Instead of you spending hours and hours of time trying in vain to find the best deals if we can spend 15-20 mins upfront we can save you all of those hours because I am only going to alert you to the very very best deals that match what you want even before they hit the market so this way you are saving yourself hours and hours of time. We are flexible. So what's best for you days or evenings?"</div>
                 </div>
-
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">I already bought</div>
                     <div class="accordion-content">"Congratulations! By any chance are you looking for a new property for investment this time?"</div>
                 </div>
-
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">Out of state property / agent</div>
                     <div class="accordion-content">"We are part of a network of the top real estate agents in the country, or North America. Would you like me to refer you to a professional that works in that area?"</div>
@@ -517,40 +618,21 @@
 
             <div class="sidebar-section">
                 <h3>Seller Resistance</h3>
-                
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">Already know home value</div>
                     <div class="accordion-content">"In addition to accurately determining value, it’s important that you are aware of any inexpensive tips that would further increase the value of your home. I can also go over a net sheet with you and determine exactly what you’ll have left in your pocket once all the closing costs are incurred. Again this is absolutely free of charge and obligates you to nothing. What's best for you days or evenings."</div>
                 </div>
-
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">Already have an agent</div>
                     <div class="accordion-content">"Would you be open to interviewing other agents? Because there's a big difference between what agents do and how much they charge. (If NO): Would it be okay if I followed up with you? When would be a good time to call back?"</div>
                 </div>
-
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">How much commission?</div>
                     <div class="accordion-content">"I dont know. It's negotiable. It depends. We will need to see your home first. OR We need to see your property first and give you the accurate assessment of your home. And again this is free no obligation for you to sell."</div>
                 </div>
-
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">Selling on my own (FSBO)</div>
                     <div class="accordion-content">"All I want to do is to give you a free market evaluation to determine what your home would sell for. Also, I can give you tips on what to do and what not to do to sell your home for the most amount of money, and we can go over all the various closing cost you will incur so you will know exactly what you’ll have left in your pocket after all expenses. It’s free of charge and obligates you to nothing. Does that sound helpful?"</div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">Not ready to sell / No timeline</div>
-                    <div class="accordion-content">"Ok understood, let me ask you this... (name of seller)... if we can guarantee you the sale of your house and net more money, with the least amount of hassle the soonest possible time what will stop you from selling your house."</div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">Need to buy first then sell</div>
-                    <div class="accordion-content">"So what do you want to do first? Would you like to buy a new home first or sell the old one first then buy? We can do it at the same time."</div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">Selling more than 6 months out</div>
-                    <div class="accordion-content">"If we can get you a buyer for your property at your price, would you be selling before then? OR If we can guarantee you the sale of your house at your price, would you be interested to sell within 3-6 months then?"</div>
                 </div>
             </div>
 
@@ -560,6 +642,7 @@
     <script>
         let cardHistory = [];
         let currentCardId = 'step-intro';
+        let sessionData = {};
 
         const intros = {
             'new-lead': `"Hi <strong>(Lead)</strong>? <span class='instruction'>(Pause)</span> This is <strong>[NAME]</strong> from Guaranteed Home Sales. The reason I'm calling is because we received your request for properties on our website and we have sent that to your email. I hope that's ok?"`,
@@ -571,23 +654,41 @@
             document.getElementById('intro-render-target').innerHTML = intros[type];
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
+            logAnswer('Selected Call Opening Style', type.toUpperCase().replace('-', ' '));
         }
 
         function startWorkflow(type) {
             cardHistory.push(currentCardId);
             document.getElementById('step-intro').classList.remove('active');
-            if (type === 'buyer') {
-                currentCardId = 'buyer-q1';
-            } else {
-                currentCardId = 'seller-q1';
-            }
+            
+            sessionData = { 'Workflow Pathway': type.toUpperCase() };
+            document.getElementById('track-flow').innerText = type.toUpperCase();
+            
+            if (type === 'buyer') { currentCardId = 'buyer-q1'; } 
+            else { currentCardId = 'seller-q1'; }
             document.getElementById(currentCardId).classList.add('active');
+            renderLiveLog();
+        }
+
+        function logAnswer(key, value) {
+            sessionData[key] = value;
+            if (key === 'Timeline') document.getElementById('track-timeline').innerText = value;
+            if (key === 'Current Home Status') document.getElementById('track-status').innerText = value;
+            if (key === 'Financing Type' || key === 'Has Agent') document.getElementById('track-finance').innerText = value;
+            renderLiveLog();
+        }
+
+        function renderLiveLog() {
+            let logString = `[LIVE CALL RUNTIME LOG]\n--------------------------------------\n`;
+            for (const [key, val] of Object.entries(sessionData)) {
+                logString += `${key}: ${val}\n`;
+            }
+            document.getElementById('crm-raw-log').innerText = logString;
         }
 
         function nextCard(nextCardId) {
             cardHistory.push(currentCardId);
             document.getElementById(currentCardId).classList.remove('active');
-            
             document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
             
             currentCardId = nextCardId;
@@ -598,7 +699,6 @@
             if (cardHistory.length > 0) {
                 document.getElementById(currentCardId).classList.remove('active');
                 document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
-                
                 currentCardId = cardHistory.pop();
                 document.getElementById(currentCardId).classList.add('active');
             }
@@ -606,12 +706,16 @@
 
         function switchWorkflowDirectly(targetCardId) {
             cardHistory.push(currentCardId);
-            
             document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
             document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
             
+            let flowType = targetCardId.startsWith('buyer') ? 'BUYER' : 'SELLER';
+            sessionData['Workflow Pathway'] = flowType;
+            document.getElementById('track-flow').innerText = flowType;
+            
             currentCardId = targetCardId;
             document.getElementById(currentCardId).classList.add('active');
+            renderLiveLog();
         }
 
         function showInlineRebuttal(rebuttalId) {
@@ -627,9 +731,111 @@
             element.parentElement.classList.toggle('open');
         }
 
+        function toggleVenueInput(path) {
+            const typeValue = document.getElementById(`${path}-type`).value;
+            const container = document.getElementById(`${path}-address-container`);
+            const scriptBox = document.getElementById(`${path}-closing-script-box`);
+            
+            if (typeValue.includes("Face to Face (Residence)")) {
+                container.style.display = "flex";
+                if(path === 'buyer') {
+                    scriptBox.innerHTML = `<strong>Face-to-Face Residence Close Out Recap Spiel:</strong><br>"Alright, so we will see you at <span id="lbl-buyer-time-1">__AM/PM</span> on <span id="lbl-buyer-date">__________</span>. We can swing by your place, what’s your address? During the meeting, We will make sure to take down of what exactly you're looking for, we'll show you our latest list of homes that match your home buying criteria and we will also show you the special list of properties not found online. Again this is free of charge and you're never obligated to buy a home."`;
+                } else {
+                    scriptBox.innerHTML = `<strong>Face-to-Face Residence Close Out Recap Spiel:</strong><br>"When can we come by your place so we will give you an accurate assessment on your home? Days or evenings? Alright, so we will see you at <span id="lbl-seller-time-1">__AM/PM</span> on <span id="lbl-seller-date">__________</span>. We can swing by your place, what’s your address? During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. Again this is free of charge and you are never obligated to sell your home."`;
+                }
+            } else if (typeValue.includes("Face to Face (Office)")) {
+                container.style.display = "none";
+                if(path === 'buyer') {
+                    scriptBox.innerHTML = `<strong>Face-to-Face Office Close Out Recap Spiel:</strong><br>"Alright, so we will see you at <span id="lbl-buyer-time-1">__AM/PM</span> on <span id="lbl-buyer-date">__________</span> at our main corporate office. During the meeting, We will make sure to take down of what exactly you're looking for, we'll show you our latest list of homes that match your home buying criteria and we will also show you the special list of properties not found online. Again this is free of charge."`;
+                } else {
+                    scriptBox.innerHTML = `<strong>Face-to-Face Office Close Out Recap Spiel:</strong><br>"Alright, so we will see you at <span id="lbl-seller-time-1">__AM/PM</span> on <span id="lbl-seller-date">__________</span> at our office branch location. During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses."`;
+                }
+            } else {
+                container.style.display = "none";
+                if(path === 'buyer') {
+                    scriptBox.innerHTML = `<strong>Zoom Call Close Out Recap Spiel:</strong><br>"Alright, so we will see you at <span id="lbl-buyer-time-1">__AM/PM</span> on <span id="lbl-buyer-date">__________</span>. After this call, we will send you a text and an email that includes the link of the meeting. During the meeting, We will make sure to take down of what exactly you're looking for, we'll show you our latest list of homes that match your home buying criteria and we will also show you the special list of properties not found online. Again this is free of charge and you're never obligated to buy a home."`;
+                } else {
+                    scriptBox.innerHTML = `<strong>Zoom Close Out Recap Spiel:</strong><br>"Alright, so we will see you at <span id="lbl-seller-time-1">__AM/PM</span> on <span id="lbl-seller-date">__________</span>. After this call, we will send you a text and an email that includes the link of the meeting and instructions on how to use the ZOOM. During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. Again this is free of charge and you are never obligated to sell your home."`;
+                }
+            }
+            // Trigger value refresh
+            updateAppointmentSummary(path);
+        }
+
+        function updateAppointmentSummary(path) {
+            const name = document.getElementById(`${path}-name`).value || '(Name of Lead)';
+            const rawDate = document.getElementById(`${path}-date`).value;
+            const rawTime = document.getElementById(`${path}-time`).value;
+            const type = document.getElementById(`${path}-type`).value;
+            const addressInput = document.getElementById(`${path}-address`) ? document.getElementById(`${path}-address`).value : '';
+
+            let formattedDate = '__________';
+            let formattedTime = '__AM/PM';
+
+            if (rawDate) {
+                const dateObj = new Date(rawDate);
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                formattedDate = dateObj.toLocaleDateString('en-US', options);
+            }
+
+            if (rawTime) {
+                const [hours, minutes] = rawTime.split(':');
+                const hourInt = parseInt(hours);
+                const ampm = hourInt >= 12 ? 'PM' : 'AM';
+                const standardHour = hourInt % 12 || 12;
+                formattedTime = `${standardHour}:${minutes} ${ampm}`;
+            }
+
+            const dateLabel = document.getElementById(`lbl-${path}-date`);
+            const timeLabel = document.getElementById(`lbl-${path}-time-1`);
+            if (dateLabel) dateLabel.innerText = formattedDate;
+            if (timeLabel) timeLabel.innerText = formattedTime;
+
+            sessionData['Lead Full Name'] = name;
+            sessionData['Pipeline Status'] = 'Appointment Set';
+            sessionData['Target Schedule'] = `${formattedTime} on ${formattedDate}`;
+            sessionData['Channel Type'] = type;
+
+            if (type.includes("Residence")) {
+                sessionData['In-Person Location'] = addressInput || 'Pending Address Input';
+                delete sessionData['Office Location'];
+            } else if (type.includes("Office")) {
+                sessionData['In-Person Location'] = "Corporate Office Headquarters";
+                sessionData['Office Location'] = "7700 Congress Ave, Suite 3114, Boca Raton, FL, 33487";
+            } else {
+                sessionData['Virtual Meeting'] = "Zoom Link Auto-Generated via Calendly Account Profile";
+                delete sessionData['In-Person Location'];
+                delete sessionData['Office Location'];
+            }
+
+            sessionData['Team Recipients'] = "jelena.stampinigroup@gmail.com, ericson.stampstaff@gmail.com, ailynnfpg@gmail.com, katherineba.gvaco@gmail.com";
+            sessionData['Calendar Invite Subject'] = `APPOINTMENT | [Initials] | ${name} | ${formattedTime} on ${formattedDate}`;
+
+            renderLiveLog();
+        }
+
         function resetWizard() {
             document.getElementById(currentCardId).classList.remove('active');
             document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
+            
+            ['buyer', 'seller'].forEach(path => {
+                document.getElementById(`${path}-name`).value = '';
+                document.getElementById(`${path}-date`).value = '';
+                document.getElementById(`${path}-time`).value = '';
+                document.getElementById(`${path}-type`).value = 'Zoom Link (Virtual)';
+                if(document.getElementById(`${path}-address`)) document.getElementById(`${path}-address`).value = '';
+                document.getElementById(`${path}-address-container`).style.display = "none";
+                toggleVenueInput(path);
+            });
+
+            document.getElementById('track-flow').innerText = 'Not Selected';
+            document.getElementById('track-timeline').innerText = 'Pending';
+            document.getElementById('track-status').innerText = 'Pending';
+            document.getElementById('track-finance').innerText = 'Pending';
+            
+            sessionData = {};
+            document.getElementById('crm-raw-log').innerText = '[No data logged yet. Select a workflow pathway above to begin tracking...]';
+
             cardHistory = [];
             currentCardId = 'step-intro';
             document.getElementById(currentCardId).classList.add('active');
