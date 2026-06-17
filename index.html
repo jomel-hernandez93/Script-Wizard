@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>Interactive ISA Script Wizard</title>
     <style>
         :root {
@@ -38,25 +38,23 @@
             height: 100%;
         }
 
-        /* Left Side Layout */
         .script-column {
             width: 70%;
-            padding: 2rem;
+            padding: 1.5rem;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
             height: 100%;
         }
 
         .workspace-split {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
             flex-grow: 1;
         }
 
-        /* Right Side Sidebar */
         .sidebar-column {
             width: 30%;
             background-color: #edf2f7;
@@ -83,11 +81,74 @@
             padding: 2rem;
             border: 1px solid var(--border-color);
             display: none;
+            position: relative;
         }
 
         .card.active {
             display: block;
             animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .progress-wrapper {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .progress-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            min-width: 80px;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-color);
+            border-radius: 12px;
+            transition: width 0.4s ease;
+        }
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .quick-jump {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1.2rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .jump-dot {
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: #e2e8f0;
+            color: #4a5568;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.15s;
+        }
+        .jump-dot.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .jump-dot.done {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .jump-dot:hover {
+            opacity: 0.8;
         }
 
         .script-text {
@@ -141,6 +202,8 @@
             margin-bottom: 1rem;
             border-bottom: 1px dashed var(--border-color);
             padding-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .btn {
@@ -151,6 +214,7 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s ease;
+            touch-action: manipulation;
         }
 
         .btn-primary { background-color: var(--primary-color); color: white; }
@@ -179,6 +243,22 @@
             border: 1px solid #fbd38d;
         }
         .btn-switch:hover { background-color: #fbd38d; }
+        .btn-copy {
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #a5b4fc;
+        }
+        .btn-copy:hover { background-color: #c7d2fe; }
+        .btn-practice {
+            background-color: #fce7f3;
+            color: #9d174d;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #f9a8d4;
+        }
+        .btn-practice:hover { background-color: #fbcfe8; }
 
         .scheduler-box {
             background: #f7fafc;
@@ -228,6 +308,8 @@
             align-items: center;
             border-bottom: 1px solid #cbd5e0;
             padding-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         .live-grid {
             display: grid;
@@ -258,7 +340,25 @@
             white-space: pre-wrap;
             max-height: 150px;
             overflow-y: auto;
+            word-break: break-word;
         }
+        .copy-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a202c;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .copy-toast.show { opacity: 1; }
 
         .sidebar-section { margin-bottom: 1rem; }
         .sidebar-section h3 { font-size: 1.1rem; padding-bottom: 0.25rem; border-bottom: 2px solid #cbd5e0; margin-bottom: 0.5rem; color: #4a5568; }
@@ -270,11 +370,111 @@
         .accordion-header::after { content: '▼'; font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s; }
         .accordion-item.open .accordion-header::after { transform: rotate(180deg); }
 
-        .intro-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-        .tab-btn { padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: #edf2f7; cursor: pointer; border-radius: 4px; font-weight: 600; }
+        .intro-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .tab-btn { padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: #edf2f7; cursor: pointer; border-radius: 4px; font-weight: 600; touch-action: manipulation; }
         .tab-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
+        .next-preview {
+            background: #eef2ff;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid #4f46e5;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            color: #1e293b;
+            flex-wrap: wrap;
+        }
+        .next-preview strong {
+            color: #4338ca;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            font-size: 0.8rem;
+        }
+        .next-preview .next-text {
+            font-weight: 500;
+            color: #0f172a;
+        }
+        .next-preview .arrow {
+            font-size: 1.2rem;
+            color: #6366f1;
+        }
+
+        /* practice mode badge */
+        .practice-badge {
+            display: inline-block;
+            background: #fce7f3;
+            color: #9d174d;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-left: 0.5rem;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile responsive */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+            .script-column {
+                width: 100%;
+                padding: 1rem;
+                height: 60%;
+                overflow-y: auto;
+            }
+            .sidebar-column {
+                width: 100%;
+                height: 40%;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                overflow-y: auto;
+                padding: 1rem;
+            }
+            .card {
+                padding: 1.25rem;
+            }
+            .script-text {
+                font-size: 1.1rem;
+            }
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 1rem;
+            }
+            .scheduler-grid {
+                grid-template-columns: 1fr;
+            }
+            .live-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .quick-jump {
+                gap: 0.3rem;
+            }
+            .jump-dot {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.65rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .script-column { height: 55%; padding: 0.75rem; }
+            .sidebar-column { height: 45%; padding: 0.75rem; }
+            .card { padding: 1rem; }
+            .nav-controls { flex-direction: column; align-items: stretch; gap: 0.4rem; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .live-grid { grid-template-columns: 1fr; }
+            .progress-wrapper { flex-direction: column; align-items: stretch; gap: 0.3rem; }
+            .progress-label { text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -282,9 +482,22 @@
     <div class="main-container">
         
         <div class="script-column">
-            
             <div class="workspace-split">
-                <div id="step-intro" class="card active">
+                <!-- Progress bar & quick jump -->
+                <div class="progress-wrapper" id="progressWrapper">
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                    </div>
+                    <span class="progress-label" id="progressLabel">0%</span>
+                    <button class="btn btn-copy" onclick="copySummary()">📋 Copy Summary</button>
+                    <button class="btn btn-practice" id="practiceToggleBtn" onclick="togglePracticeMode()">🎯 Practice Mode</button>
+                </div>
+
+                <!-- Quick Jump Navigation -->
+                <div class="quick-jump" id="quickJumpContainer"></div>
+
+                <!-- INTRO -->
+                <div id="step-intro" class="card active" data-step="intro">
                     <h2>1. Opening Options</h2>
                     <div class="intro-tabs">
                         <button class="tab-btn active" onclick="switchIntro('new-lead', this)">New Lead Intro</button>
@@ -304,7 +517,8 @@
                     </div>
                 </div>
 
-                <div id="buyer-q1" class="card">
+                <!-- BUYER QUESTIONS -->
+                <div id="buyer-q1" class="card" data-step="buyer-q1">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q1')">🗀 Switch to Seller Workflow</button>
@@ -312,8 +526,8 @@
                     <h2>Buyer - Question 1</h2>
                     <p class="script-text">"Are you planning in buying a home in the next 3-6 months?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Timeline', '3-6 Months (Yes)'); nextCard('buyer-q2')">YES</button>
-                        <button class="btn btn-danger" onclick="logAnswer('Timeline', 'Unsure / Hesitant'); showInlineRebuttal('buyer-q1-rebuttal')">NO / NOT SURE</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Timeline', '3-6 Months (Yes)','buyer-q2')">YES</button>
+                        <button class="btn btn-danger" onclick="handleAnswer('Timeline', 'Unsure / Hesitant', null, 'buyer-q1-rebuttal')">NO / NOT SURE</button>
                     </div>
                     <div id="buyer-q1-rebuttal" class="inline-rebuttal">
                         "If we can find you your perfect home with the best deals what will stop you from buying in the next 3-6 months? OR What's holding you back from purchasing if there are really good deals right now can I ask?"
@@ -325,9 +539,10 @@
                         <br><br>
                         <button class="btn btn-primary" onclick="nextCard('buyer-q2')">Next Question</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Do you currently rent, or do you own your own home?"</span></div>
                 </div>
 
-                <div id="buyer-q2" class="card">
+                <div id="buyer-q2" class="card" data-step="buyer-q2">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q2')">🗀 Switch to Seller Workflow</button>
@@ -335,17 +550,18 @@
                     <h2>Buyer - Question 2</h2>
                     <p class="script-text">"Do you currently rent, or do you own your own home?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Current Home Status', 'Rents'); nextCard('buyer-q3')">RENT</button>
-                        <button class="btn btn-primary" onclick="logAnswer('Current Home Status', 'Owns'); showInlineRebuttal('buyer-q2-rebuttal')">OWN</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Current Home Status', 'Rents','buyer-q3')">RENT</button>
+                        <button class="btn btn-primary" onclick="handleAnswer('Current Home Status', 'Owns', null, 'buyer-q2-rebuttal')">OWN</button>
                     </div>
                     <div id="buyer-q2-rebuttal" class="inline-rebuttal">
                         "Would you prefer to buy before listing your home, or do you want to sell first?"
                         <br><br>
                         <button class="btn btn-primary" onclick="nextCard('buyer-q3')">Next Question</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Are you planning on staying in the area or moving out of the area?"</span></div>
                 </div>
 
-                <div id="buyer-q3" class="card">
+                <div id="buyer-q3" class="card" data-step="buyer-q3">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q3')">🗀 Switch to Seller Workflow</button>
@@ -353,12 +569,13 @@
                     <h2>Buyer - Question 3</h2>
                     <p class="script-text">"Are you planning on staying in the area or moving out of the area?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Target Location', 'Staying in Area'); nextCard('buyer-q4')">Staying in Area</button>
-                        <button class="btn btn-danger" onclick="logAnswer('Target Location', 'Moving Out of Area'); nextCard('buyer-q4')">Moving Out of Area</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Target Location', 'Staying in Area','buyer-q4')">Staying in Area</button>
+                        <button class="btn btn-danger" onclick="handleAnswer('Target Location', 'Moving Out of Area','buyer-q4')">Moving Out of Area</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Will you be paying cash or will you need financing?"</span></div>
                 </div>
 
-                <div id="buyer-q4" class="card">
+                <div id="buyer-q4" class="card" data-step="buyer-q4">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-q4')">🗀 Switch to Seller Workflow</button>
@@ -366,8 +583,8 @@
                     <h2>Buyer - Question 4</h2>
                     <p class="script-text">"Will you be paying cash or will you need financing?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Financing Type', 'Cash'); nextCard('buyer-offer')">CASH</button>
-                        <button class="btn btn-primary" onclick="logAnswer('Financing Type', 'Needs Financing'); showInlineRebuttal('buyer-q4-rebuttal')">FINANCING</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Financing Type', 'Cash','buyer-offer')">CASH</button>
+                        <button class="btn btn-primary" onclick="handleAnswer('Financing Type', 'Needs Financing', null, 'buyer-q4-rebuttal')">FINANCING</button>
                     </div>
                     <div id="buyer-q4-rebuttal" class="inline-rebuttal">
                         "Have you already spoken with a lender?"
@@ -379,9 +596,10 @@
                         <br><br>
                         <button class="btn btn-primary" onclick="nextCard('buyer-offer')">Go to Offer</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Would you like to receive daily updates of homes ..."</span></div>
                 </div>
 
-                <div id="buyer-offer" class="card">
+                <div id="buyer-offer" class="card" data-step="buyer-offer">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-offer')">🗀 Switch to Seller Workflow</button>
@@ -389,12 +607,13 @@
                     <h2>Buyer Offer</h2>
                     <p class="script-text">"Would you like to receive daily updates of homes that match what you’re looking for from ALL real estate companies, emailed to your phone, as quickly as they become available, including homes that are Good deals like bank sales, vacant homes and estate sales AND you can't find them on Internet? It’s a FREE service and of course you're never obligated to buy a home. Would that interest you? (or does that sound helpful)?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Offer Accepted', 'Yes'); nextCard('buyer-close')">Lead Says YES</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Offer Accepted', 'Yes','buyer-close')">Lead Says YES</button>
                         <button class="btn btn-secondary" onclick="resetWizard()">Start Over</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"When do you think is the best time to get together ..."</span></div>
                 </div>
 
-                <div id="buyer-close" class="card">
+                <div id="buyer-close" class="card" data-step="buyer-close">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('seller-close')">🗀 Switch to Seller Workflow</button>
@@ -419,12 +638,12 @@
                             <div class="form-group">
                                 <label>Meeting Type</label>
                                 <select id="buyer-type" class="form-input" onchange="toggleVenueInput('buyer'); updateAppointmentSummary('buyer')">
+                                    <option value="Face to Face (Residence)" selected>Face to Face (Residence)</option>
                                     <option value="Zoom Link (Virtual)">Zoom Link (Virtual)</option>
-                                    <option value="Face to Face (Residence)">Face to Face (Residence)</option>
                                     <option value="Face to Face (Office)">Face to Face (Office)</option>
                                 </select>
                             </div>
-                            <div class="form-group" id="buyer-address-container" style="display:none;">
+                            <div class="form-group" id="buyer-address-container" style="display:flex;">
                                 <label>Lead Residence Address</label>
                                 <input type="text" id="buyer-address" class="form-input" placeholder="Enter physical street address" oninput="updateAppointmentSummary('buyer')">
                             </div>
@@ -432,14 +651,14 @@
                     </div>
 
                     <div id="buyer-closing-script-box" class="spiel-box">
-                        <strong>Zoom Call Close Out Recap Spiel:</strong><br>
-                        "Alright, so we will see you at <span id="lbl-buyer-time-1">__AM/PM</span> on <span id="lbl-buyer-date">__________</span>. After this call, we will send you a text and an email that includes the link of the meeting. During the meeting, We will make sure to take down of what exactly you're looking for, we'll show you our latest list of homes that match your home buying criteria and we will also show you the special list of properties not found online. Again this is free of charge and you're never obligated to buy a home."
+                        <strong>Face-to-Face Residence Close Out Recap Spiel:</strong><br>
+                        "Alright, so we will see you at <span id="lbl-buyer-time-1">__AM/PM</span> on <span id="lbl-buyer-date">__________</span>. We can swing by your place, what’s your address? During the meeting, We will make sure to take down of what exactly you're looking for, we'll show you our latest list of homes that match your home buying criteria and we will also show you the special list of properties not found online. Again this is free of charge and you're never obligated to buy a home."
                     </div>
                     <button class="btn btn-success" style="width:100%;" onclick="resetWizard()">Finish Call / Clear Cache for Next Lead</button>
                 </div>
 
-
-                <div id="seller-q1" class="card">
+                <!-- SELLER QUESTIONS -->
+                <div id="seller-q1" class="card" data-step="seller-q1">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q1')">🗀 Switch to Buyer Workflow</button>
@@ -447,17 +666,18 @@
                     <h2>Seller - Question 1</h2>
                     <p class="script-text">"Are you planning in making a move in the next 3-6mos?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Timeline', '3-6 Months (Yes)'); nextCard('seller-q2')">YES</button>
-                        <button class="btn btn-danger" onclick="logAnswer('Timeline', 'Unsure / Delayed'); showInlineRebuttal('seller-q1-rebuttal')">NO</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Timeline', '3-6 Months (Yes)','seller-q2')">YES</button>
+                        <button class="btn btn-danger" onclick="handleAnswer('Timeline', 'Unsure / Delayed', null, 'seller-q1-rebuttal')">NO</button>
                     </div>
                     <div id="seller-q1-rebuttal" class="inline-rebuttal">
                         "If we can get you a seller that could help you get out of your lease, would you be interested in moving before then?"
                         <br><br>
                         <button class="btn btn-primary" onclick="nextCard('seller-q2')">Next Question</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Do you currently rent, or do you own your own home?"</span></div>
                 </div>
 
-                <div id="seller-q2" class="card">
+                <div id="seller-q2" class="card" data-step="seller-q2">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q2')">🗀 Switch to Buyer Workflow</button>
@@ -465,17 +685,18 @@
                     <h2>Seller - Question 2</h2>
                     <p class="script-text">"Do you currently rent, or do you own your own home?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Current Home Status', 'Rents'); nextCard('seller-q3')">RENT</button>
-                        <button class="btn btn-primary" onclick="logAnswer('Current Home Status', 'Owns House'); showInlineRebuttal('seller-q2-rebuttal')">OWN</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Current Home Status', 'Rents','seller-q3')">RENT</button>
+                        <button class="btn btn-primary" onclick="handleAnswer('Current Home Status', 'Owns House', null, 'seller-q2-rebuttal')">OWN</button>
                     </div>
                     <div id="seller-q2-rebuttal" class="inline-rebuttal">
                         "Would you prefer to buy before listing your home, or do you want to sell first? Do you rent or do you have a property that you're planning to sell?"
                         <br><br>
                         <button class="btn btn-primary" onclick="nextCard('seller-q3')">Next Question</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Are you planning on staying in the area or moving out of the area?"</span></div>
                 </div>
 
-                <div id="seller-q3" class="card">
+                <div id="seller-q3" class="card" data-step="seller-q3">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q3')">🗀 Switch to Buyer Workflow</button>
@@ -483,12 +704,13 @@
                     <h2>Seller - Question 3</h2>
                     <p class="script-text">"Are you planning on staying in the area or moving out of the area?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Target Location', 'Staying in Area'); nextCard('seller-q4')">Staying in Area</button>
-                        <button class="btn btn-danger" onclick="logAnswer('Target Location', 'Moving Out of Area'); nextCard('seller-q4')">Moving Out of Area</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Target Location', 'Staying in Area','seller-q4')">Staying in Area</button>
+                        <button class="btn btn-danger" onclick="handleAnswer('Target Location', 'Moving Out of Area','seller-q4')">Moving Out of Area</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"If you were to sell, when do you think that might be?"</span></div>
                 </div>
 
-                <div id="seller-q4" class="card">
+                <div id="seller-q4" class="card" data-step="seller-q4">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-q4')">🗀 Switch to Buyer Workflow</button>
@@ -496,17 +718,18 @@
                     <h2>Seller - Question 4</h2>
                     <p class="script-text">"If you were to sell, when do you think that might be?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Selling Window', 'Answer Provided'); nextCard('seller-q5')">ANSWERED</button>
-                        <button class="btn btn-danger" onclick="logAnswer('Selling Window', 'Unsure'); showInlineRebuttal('seller-q4-rebuttal')">UNSURE</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Selling Window', 'Answer Provided','seller-q5')">ANSWERED</button>
+                        <button class="btn btn-danger" onclick="handleAnswer('Selling Window', 'Unsure', null, 'seller-q4-rebuttal')">UNSURE</button>
                     </div>
                     <div id="seller-q4-rebuttal" class="inline-rebuttal">
                         "If we can guarantee the sale of your home according to your price point, with the least amount of hassle and the soonest possible time, will you consider to sell sooner?"
                         <br><br>
                         <button class="btn btn-primary" onclick="nextCard('seller-q5')">Next Question</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Do you have a realtor to help you when the time is right?"</span></div>
                 </div>
 
-                <div id="seller-q5" class="card">
+                <div id="seller-q5" class="card" data-step="seller-q5">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-offer')">🗀 Switch to Buyer Workflow</button>
@@ -514,17 +737,18 @@
                     <h2>Seller - Question 5</h2>
                     <p class="script-text">"Do you have a realtor to help you when the time is right?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-danger" onclick="logAnswer('Has Agent', 'Yes / Committed'); showInlineRebuttal('seller-q5-rebuttal')">YES</button>
-                        <button class="btn btn-success" onclick="logAnswer('Has Agent', 'No'); nextCard('seller-offer')">NO</button>
+                        <button class="btn btn-danger" onclick="handleAnswer('Has Agent', 'Yes / Committed', null, 'seller-q5-rebuttal')">YES</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Has Agent', 'No','seller-offer')">NO</button>
                     </div>
                     <div id="seller-q5-rebuttal" class="inline-rebuttal">
                         "Are you 100% committed to be working exclusively and only with that realtor?"
                         <br><br>
                         <button class="btn btn-primary" onclick="nextCard('seller-offer')">Go to Offer</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"Would you like a free market evaluation ..."</span></div>
                 </div>
 
-                <div id="seller-offer" class="card">
+                <div id="seller-offer" class="card" data-step="seller-offer">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-offer')">🗀 Switch to Buyer Workflow</button>
@@ -532,12 +756,13 @@
                     <h2>Seller Offer</h2>
                     <p class="script-text">"Would you like a free market evaluation to determine what your home would sell for? Also, I can give you tips on what to do and what not to do to sell your home for the most amount of money, and we can go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. It’s FREE of charge and obligates you to nothing. Does that sound helpful?"</p>
                     <div class="btn-group">
-                        <button class="btn btn-success" onclick="logAnswer('Offer Accepted', 'Yes'); nextCard('seller-close')">Lead Says YES</button>
+                        <button class="btn btn-success" onclick="handleAnswer('Offer Accepted', 'Yes','seller-close')">Lead Says YES</button>
                         <button class="btn btn-secondary" onclick="resetWizard()">Start Over</button>
                     </div>
+                    <div class="next-preview"><span class="arrow">⏩</span> <strong>Coming up next:</strong> <span class="next-text">"When do you think is the best time to get together ..."</span></div>
                 </div>
 
-                <div id="seller-close" class="card">
+                <div id="seller-close" class="card" data-step="seller-close">
                     <div class="nav-controls">
                         <button class="btn btn-back" onclick="goBack()">← Back</button>
                         <button class="btn btn-switch" onclick="switchWorkflowDirectly('buyer-close')">🗀 Switch to Buyer Workflow</button>
@@ -561,12 +786,12 @@
                             <div class="form-group">
                                 <label>Meeting Type</label>
                                 <select id="seller-type" class="form-input" onchange="toggleVenueInput('seller'); updateAppointmentSummary('seller')">
+                                    <option value="Face to Face (Residence)" selected>Face to Face (Residence)</option>
                                     <option value="Zoom Link (Virtual)">Zoom Link (Virtual)</option>
-                                    <option value="Face to Face (Residence)">Face to Face (Residence)</option>
                                     <option value="Face to Face (Office)">Face to Face (Office)</option>
                                 </select>
                             </div>
-                            <div class="form-group" id="seller-address-container" style="display:none;">
+                            <div class="form-group" id="seller-address-container" style="display:flex;">
                                 <label>Lead Property Address</label>
                                 <input type="text" id="seller-address" class="form-input" placeholder="Enter physical street address" oninput="updateAppointmentSummary('seller')">
                             </div>
@@ -574,8 +799,8 @@
                     </div>
 
                     <div id="seller-closing-script-box" class="spiel-box">
-                        <strong>Zoom Close Out Recap Spiel:</strong><br>
-                        "Alright, so we will see you at <span id="lbl-seller-time-1">__AM/PM</span> on <span id="lbl-seller-date">__________</span>. After this call, we will send you a text and an email that includes the link of the meeting and instructions on how to use the ZOOM. During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. Again this is free of charge and you are never obligated to sell your home."
+                        <strong>Face-to-Face Residence Close Out Recap Spiel:</strong><br>
+                        "When can we come by your place so we will give you an accurate assessment on your home? Days or evenings? Alright, so we will see you at <span id="lbl-seller-time-1">__AM/PM</span> on <span id="lbl-seller-date">__________</span>. We can swing by your place, what’s your address? During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. Again this is free of charge and you are never obligated to sell your home."
                     </div>
                     <button class="btn btn-success" style="width:100%;" onclick="resetWizard()">Finish Call / Clear Cache for Next Lead</button>
                 </div>
@@ -594,7 +819,6 @@
                 </div>
                 <div id="crm-raw-log" class="raw-log-box">[No data logged yet. Select a workflow pathway above to begin tracking...]</div>
             </div>
-
         </div>
 
         <div class="sidebar-column">
@@ -635,21 +859,96 @@
                     <div class="accordion-content">"All I want to do is to give you a free market evaluation to determine what your home would sell for. Also, I can give you tips on what to do and what not to do to sell your home for the most amount of money, and we can go over all the various closing cost you will incur so you will know exactly what you’ll have left in your pocket after all expenses. It’s free of charge and obligates you to nothing. Does that sound helpful?"</div>
                 </div>
             </div>
-
         </div>
     </div>
 
+    <!-- Toast for copy -->
+    <div id="copyToast" class="copy-toast">✅ Summary copied to clipboard!</div>
+
     <script>
+        // ---- STATE ----
         let cardHistory = [];
         let currentCardId = 'step-intro';
         let sessionData = {};
+        let practiceMode = false;
+        let practiceTimer = null;
 
+        // Step order for progress & quick jump
+        const stepOrder = [
+            'step-intro',
+            'buyer-q1','buyer-q2','buyer-q3','buyer-q4','buyer-offer','buyer-close',
+            'seller-q1','seller-q2','seller-q3','seller-q4','seller-q5','seller-offer','seller-close'
+        ];
+
+        // Friendly labels for quick jump
+        const stepLabels = {
+            'step-intro': 'Intro',
+            'buyer-q1': 'B-Q1',
+            'buyer-q2': 'B-Q2',
+            'buyer-q3': 'B-Q3',
+            'buyer-q4': 'B-Q4',
+            'buyer-offer': 'B-Offer',
+            'buyer-close': 'B-Close',
+            'seller-q1': 'S-Q1',
+            'seller-q2': 'S-Q2',
+            'seller-q3': 'S-Q3',
+            'seller-q4': 'S-Q4',
+            'seller-q5': 'S-Q5',
+            'seller-offer': 'S-Offer',
+            'seller-close': 'S-Close'
+        };
+
+        // ---- INTROS ----
         const intros = {
             'new-lead': `"Hi <strong>(Lead)</strong>? <span class='instruction'>(Pause)</span> This is <strong>[NAME]</strong> from Guaranteed Home Sales. The reason I'm calling is because we received your request for properties on our website and we have sent that to your email. I hope that's ok?"`,
             'web-search': `"Hi <strong>(Lead Name)</strong>, this is <strong>(Your Name)</strong> from <strong>(Company Name)</strong>. And the reason I'm calling is because you were on our website last night looking for access to search for properties. And as a courtesy I am calling you to make sure that you got what you're looking for, I hope that's ok?"`,
             'old-lead': `"Hi... is this <strong>(Name of Lead)</strong>? This is <strong>[NAME]</strong> again from Guaranteed Home Sales. A while back you requested for properties on our website and we are still sending it to your email, is that ok? I just want to touch base with you again if you are now looking to move in 3-6 months."`
         };
 
+        // ---- PRACTICE MODE ----
+        function togglePracticeMode() {
+            practiceMode = !practiceMode;
+            const btn = document.getElementById('practiceToggleBtn');
+            if (practiceMode) {
+                btn.textContent = '🎯 Practice: ON';
+                btn.style.background = '#fbcfe8';
+                btn.style.borderColor = '#f472b6';
+                startPracticeSimulation();
+            } else {
+                btn.textContent = '🎯 Practice Mode';
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                clearTimeout(practiceTimer);
+            }
+        }
+
+        function startPracticeSimulation() {
+            if (!practiceMode) return;
+            // Simulate a lead response after 5-8 seconds
+            const delay = 5000 + Math.random() * 4000;
+            practiceTimer = setTimeout(() => {
+                if (!practiceMode) return;
+                const activeCard = document.querySelector('.card.active');
+                if (!activeCard) return;
+                const id = activeCard.id;
+                // Find clickable buttons inside the active card (primary/success/danger)
+                const btns = activeCard.querySelectorAll('.btn-group .btn-success, .btn-group .btn-primary, .btn-group .btn-danger');
+                if (btns.length > 0) {
+                    // Pick a random button
+                    const randomBtn = btns[Math.floor(Math.random() * btns.length)];
+                    if (randomBtn) {
+                        // Highlight and click
+                        randomBtn.style.boxShadow = '0 0 0 3px #fbbf24';
+                        setTimeout(() => { randomBtn.style.boxShadow = ''; }, 600);
+                        randomBtn.click();
+                    }
+                }
+                // Continue simulation
+                startPracticeSimulation();
+            }, delay);
+        }
+
+        // ---- NAVIGATION HELPERS ----
         function switchIntro(type, element) {
             document.getElementById('intro-render-target').innerHTML = intros[type];
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -660,14 +959,13 @@
         function startWorkflow(type) {
             cardHistory.push(currentCardId);
             document.getElementById('step-intro').classList.remove('active');
-            
             sessionData = { 'Workflow Pathway': type.toUpperCase() };
             document.getElementById('track-flow').innerText = type.toUpperCase();
-            
             if (type === 'buyer') { currentCardId = 'buyer-q1'; } 
             else { currentCardId = 'seller-q1'; }
             document.getElementById(currentCardId).classList.add('active');
             renderLiveLog();
+            updateProgressAndJump();
         }
 
         function logAnswer(key, value) {
@@ -676,6 +974,26 @@
             if (key === 'Current Home Status') document.getElementById('track-status').innerText = value;
             if (key === 'Financing Type' || key === 'Has Agent') document.getElementById('track-finance').innerText = value;
             renderLiveLog();
+            updateProgressAndJump();
+        }
+
+        function handleAnswer(key, value, next, rebuttalId) {
+            logAnswer(key, value);
+            if (rebuttalId) {
+                showInlineRebuttal(rebuttalId);
+                // If practice mode, auto-click next after a delay
+                if (practiceMode) {
+                    const rebuttal = document.getElementById(rebuttalId);
+                    if (rebuttal) {
+                        const nextBtn = rebuttal.querySelector('.btn-primary');
+                        if (nextBtn) {
+                            setTimeout(() => { nextBtn.click(); }, 2000);
+                        }
+                    }
+                }
+            } else if (next) {
+                nextCard(next);
+            }
         }
 
         function renderLiveLog() {
@@ -690,9 +1008,9 @@
             cardHistory.push(currentCardId);
             document.getElementById(currentCardId).classList.remove('active');
             document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
-            
             currentCardId = nextCardId;
             document.getElementById(currentCardId).classList.add('active');
+            updateProgressAndJump();
         }
 
         function goBack() {
@@ -701,6 +1019,7 @@
                 document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
                 currentCardId = cardHistory.pop();
                 document.getElementById(currentCardId).classList.add('active');
+                updateProgressAndJump();
             }
         }
 
@@ -708,14 +1027,13 @@
             cardHistory.push(currentCardId);
             document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
             document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
-            
             let flowType = targetCardId.startsWith('buyer') ? 'BUYER' : 'SELLER';
             sessionData['Workflow Pathway'] = flowType;
             document.getElementById('track-flow').innerText = flowType;
-            
             currentCardId = targetCardId;
             document.getElementById(currentCardId).classList.add('active');
             renderLiveLog();
+            updateProgressAndJump();
         }
 
         function showInlineRebuttal(rebuttalId) {
@@ -731,6 +1049,7 @@
             element.parentElement.classList.toggle('open');
         }
 
+        // ---- VENUE & APPOINTMENT ----
         function toggleVenueInput(path) {
             const typeValue = document.getElementById(`${path}-type`).value;
             const container = document.getElementById(`${path}-address-container`);
@@ -758,7 +1077,6 @@
                     scriptBox.innerHTML = `<strong>Zoom Close Out Recap Spiel:</strong><br>"Alright, so we will see you at <span id="lbl-seller-time-1">__AM/PM</span> on <span id="lbl-seller-date">__________</span>. After this call, we will send you a text and an email that includes the link of the meeting and instructions on how to use the ZOOM. During the meeting, we are going to give you tips on what to do and what not to do to sell your home for the most amount of money, and we will go over all the various closing costs you will incur so you will know exactly what you’ll have left in your pocket after all expenses. Again this is free of charge and you are never obligated to sell your home."`;
                 }
             }
-            // Trigger value refresh
             updateAppointmentSummary(path);
         }
 
@@ -810,10 +1128,80 @@
 
             sessionData['Team Recipients'] = "jelena.stampinigroup@gmail.com, ericson.stampstaff@gmail.com, ailynnfpg@gmail.com, katherineba.gvaco@gmail.com";
             sessionData['Calendar Invite Subject'] = `APPOINTMENT | [Initials] | ${name} | ${formattedTime} on ${formattedDate}`;
-
             renderLiveLog();
         }
 
+        // ---- PROGRESS & QUICK JUMP ----
+        function updateProgressAndJump() {
+            const allCards = document.querySelectorAll('.card');
+            const totalSteps = stepOrder.length;
+            let currentIndex = stepOrder.indexOf(currentCardId);
+            if (currentIndex === -1) currentIndex = 0;
+            const pct = Math.round(((currentIndex + 1) / totalSteps) * 100);
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressLabel').textContent = pct + '%';
+
+            // Build quick jump dots
+            const container = document.getElementById('quickJumpContainer');
+            container.innerHTML = '';
+            stepOrder.forEach((stepId, idx) => {
+                const dot = document.createElement('span');
+                dot.className = 'jump-dot';
+                if (stepId === currentCardId) dot.classList.add('active');
+                // Check if this step has been visited (in history or current)
+                const historySet = new Set(cardHistory);
+                if (historySet.has(stepId) || stepId === currentCardId) dot.classList.add('done');
+                dot.textContent = stepLabels[stepId] || stepId;
+                dot.title = `Jump to ${stepLabels[stepId] || stepId}`;
+                dot.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Only jump if card exists
+                    const target = document.getElementById(stepId);
+                    if (target) {
+                        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+                        document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
+                        if (currentCardId !== stepId) {
+                            cardHistory.push(currentCardId);
+                        }
+                        currentCardId = stepId;
+                        target.classList.add('active');
+                        updateProgressAndJump();
+                        renderLiveLog();
+                    }
+                });
+                container.appendChild(dot);
+            });
+        }
+
+        // ---- COPY SUMMARY ----
+        function copySummary() {
+            let text = '📋 ISA CALL SUMMARY\n';
+            text += '====================================\n';
+            for (const [key, val] of Object.entries(sessionData)) {
+                text += `${key}: ${val}\n`;
+            }
+            text += '====================================\n';
+            text += `Generated: ${new Date().toLocaleString()}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }).catch(() => {
+                // fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                const toast = document.getElementById('copyToast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            });
+        }
+
+        // ---- RESET ----
         function resetWizard() {
             document.getElementById(currentCardId).classList.remove('active');
             document.querySelectorAll('.inline-rebuttal').forEach(reb => reb.style.display = 'none');
@@ -822,9 +1210,9 @@
                 document.getElementById(`${path}-name`).value = '';
                 document.getElementById(`${path}-date`).value = '';
                 document.getElementById(`${path}-time`).value = '';
-                document.getElementById(`${path}-type`).value = 'Zoom Link (Virtual)';
+                document.getElementById(`${path}-type`).value = 'Face to Face (Residence)';
                 if(document.getElementById(`${path}-address`)) document.getElementById(`${path}-address`).value = '';
-                document.getElementById(`${path}-address-container`).style.display = "none";
+                document.getElementById(`${path}-address-container`).style.display = "flex";
                 toggleVenueInput(path);
             });
 
@@ -837,9 +1225,32 @@
             document.getElementById('crm-raw-log').innerText = '[No data logged yet. Select a workflow pathway above to begin tracking...]';
 
             cardHistory = [];
+            
             currentCardId = 'step-intro';
             document.getElementById(currentCardId).classList.add('active');
+            updateProgressAndJump();
+            // Turn off practice mode if on
+            if (practiceMode) {
+                practiceMode = false;
+                document.getElementById('practiceToggleBtn').textContent = '🎯 Practice Mode';
+                document.getElementById('practiceToggleBtn').style.background = '';
+                document.getElementById('practiceToggleBtn').style.borderColor = '';
+                clearTimeout(practiceTimer);
+            }
         }
+
+        // ---- DOM READY ----
+        document.addEventListener('DOMContentLoaded', function() {
+            // Default face-to-face
+            ['buyer', 'seller'].forEach(path => {
+                const typeEl = document.getElementById(`${path}-type`);
+                if (typeEl) {
+                    typeEl.value = 'Face to Face (Residence)';
+                    toggleVenueInput(path);
+                }
+            });
+            updateProgressAndJump();
+        });
     </script>
 </body>
 </html>
